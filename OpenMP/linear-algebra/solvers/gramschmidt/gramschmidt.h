@@ -42,8 +42,8 @@
 #  endif
 # endif /* !N */
 
-# define _PB_NI POLYBENCH_LOOP_BOUND(NI,ni)
-# define _PB_NJ POLYBENCH_LOOP_BOUND(NJ,nj)
+# define _PB_NI NI
+# define _PB_NJ NJ
 
 # ifndef DATA_TYPE
 #  define DATA_TYPE double

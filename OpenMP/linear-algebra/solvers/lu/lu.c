@@ -13,7 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 1024. */
@@ -50,7 +50,6 @@ void print_array(int n,
   fprintf (stderr, "\n");
 }
 
-
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
 static
@@ -58,20 +57,26 @@ void kernel_lu(int n,
 	       DATA_TYPE POLYBENCH_2D(A,N,N,n,n))
 {
   int i, j, k;
-  #pragma scop
-  #pragma omp parallel
-  {
-    #pragma omp for private (j, i)
+  // #pragma scop
+  // #pragma omp parallel
+  // {
+    // #pragma omp parallel for private (j, i)
     for (k = 0; k < _PB_N; k++)
     {
-      for (j = k + 1; j < _PB_N; j++)
-	A[k][j] = A[k][j] / A[k][k];
-      for(i = k + 1; i < _PB_N; i++)
-	for (j = k + 1; j < _PB_N; j++)
-	  A[i][j] = A[i][j] - A[i][k] * A[k][j];
+      #pragma omp parallel for private (j)
+      for (j = k + 1; j < _PB_N; j++){
+	      A[k][j] = A[k][j] / A[k][k];
+      }
+
+      #pragma omp parallel for private (i, j)
+      for(i = k + 1; i < _PB_N; i++){
+        for (j = k + 1; j < _PB_N; j++){
+          A[i][j] = A[i][j] - A[i][k] * A[k][j];
+        }
+      }
     }
-  }
-  #pragma endscop
+  // }
+  // #pragma endscop
 }
 
 
@@ -92,6 +97,14 @@ int main(int argc, char** argv)
 
   /* Run kernel. */
   kernel_lu (n, POLYBENCH_ARRAY(A));
+    // print_array(10, POLYBENCH_ARRAY(A));
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+    kernel_lu (n, POLYBENCH_ARRAY(A));
+  }
+  polybench_timer_stop();
+
+  polybench_timer_print();
 
   /* Stop and print timer. */
   polybench_stop_instruments;

@@ -10,7 +10,7 @@
 
 /* Default to STANDARD_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-#  define STANDARD_DATASET
+#  define LARGE_DATASET
 # endif
 
 /* Do not define anything if the user manually defines the size. */
@@ -37,7 +37,7 @@
 #  endif
 # endif /* !N */
 
-# define _PB_N POLYBENCH_LOOP_BOUND(N,n)
+# define _PB_N N
 
 # ifndef DATA_TYPE
 #  define DATA_TYPE double

@@ -22,8 +22,10 @@
  */
 #ifndef POLYBENCH_H
 # define POLYBENCH_H
-
+# 
 # include <stdlib.h>
+
+#define POLYBENCH_TIME
 
 /* Array padding. By default, none is used. */
 # ifndef POLYBENCH_PADDING_FACTOR

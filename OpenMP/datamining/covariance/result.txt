@@ -1,0 +1,105 @@
+var: m
+var: mean
+var: mean dtype: float32
+var: i
+var: n
+var: data
+var: data dtype: float32
+var: float_n
+For loop init variable: j
+For loop init variable: i
+Index variable: j
+Start expression: 0
+End expression: m[0]
+Index variable: i
+Start expression: 0
+End expression: n[0]
+for j in range(m[0]):
+    m = T.Buffer((1,), "int32")
+    mean = T.Buffer((1000,))
+    mean[j] = T.float32(0)
+    for i in range(n[0]):
+        n = T.Buffer((1,), "int32")
+        data = T.Buffer((1000, 1000))
+        mean[j] = mean[j] + data[i, j]
+    float_n = T.Buffer((1,))
+    mean[j] = mean[j] / float_n[0]
+# from tvm.script import tir as T
+
+@T.prim_func
+def main(data: T.Buffer((1000, 1000), "float32"), float_n: T.Buffer((1,), "float32"), i: T.int32, j: T.int32, m: T.Buffer((1,), "int32"), mean: T.Buffer((1000,), "float32"), n: T.Buffer((1,), "int32")):
+    T.func_attr({"tir.noalias": T.bool(True)})
+    for j in range(m[0]):
+        mean[j] = T.float32(0)
+        for i in range(n[0]):
+            mean[j] = mean[j] + data[i, j]
+        mean[j] = mean[j] / float_n[0]
+var: n
+var: j
+var: m
+var: data
+var: data dtype: float32
+var: mean
+var: mean dtype: float32
+For loop init variable: i
+For loop init variable: j
+Index variable: i
+Start expression: 0
+End expression: n[0]
+Index variable: j
+Start expression: 0
+End expression: m[0]
+for i, j in T.grid(n[0], m[0]):
+    n = T.Buffer((1,), "int32")
+    m = T.Buffer((1,), "int32")
+    data = T.Buffer((1000, 1000))
+    mean = T.Buffer((1000,))
+    data[i, j] = data[i, j] - mean[j]
+# from tvm.script import tir as T
+
+@T.prim_func
+def main(data: T.Buffer((1000, 1000), "float32"), i: T.int32, j: T.int32, m: T.Buffer((1,), "int32"), mean: T.Buffer((1000,), "float32"), n: T.Buffer((1,), "int32")):
+    T.func_attr({"tir.noalias": T.bool(True)})
+    for i, j in T.grid(n[0], m[0]):
+        data[i, j] = data[i, j] - mean[j]
+var: m
+var: j2
+var: symmat
+var: symmat dtype: float32
+var: i
+var: n
+var: data
+var: data dtype: float32
+For loop init variable: j1
+For loop init variable: j2
+For loop init variable: i
+Index variable: j1
+Start expression: 0
+End expression: m[0]
+Index variable: j2
+Start expression: j1
+End expression: m[0]
+Index variable: i
+Start expression: 0
+End expression: n[0]
+for j1 in range(m[0]):
+    m = T.Buffer((1,), "int32")
+    for j2 in range(j1, j1 + (m[0] - j1)):
+        symmat = T.Buffer((1000, 1000))
+        symmat[j1, j2] = T.float32(0)
+        for i in range(n[0]):
+            n = T.Buffer((1,), "int32")
+            data = T.Buffer((1000, 1000))
+            symmat[j1, j2] = symmat[j1, j2] + data[i, j1] * data[i, j2]
+        symmat[j2, j1] = symmat[j1, j2]
+# from tvm.script import tir as T
+
+@T.prim_func
+def main(data: T.Buffer((1000, 1000), "float32"), i: T.int32, j1: T.int32, j2: T.int32, m: T.Buffer((1,), "int32"), n: T.Buffer((1,), "int32"), symmat: T.Buffer((1000, 1000), "float32")):
+    T.func_attr({"tir.noalias": T.bool(True)})
+    for j1 in range(m[0]):
+        for j2 in range(j1, j1 + (m[0] - j1)):
+            symmat[j1, j2] = T.float32(0)
+            for i in range(n[0]):
+                symmat[j1, j2] = symmat[j1, j2] + data[i, j1] * data[i, j2]
+            symmat[j2, j1] = symmat[j1, j2]

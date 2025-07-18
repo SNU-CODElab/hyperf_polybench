@@ -13,7 +13,8 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+// #include <polybench.h>
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
@@ -92,7 +93,6 @@ void kernel_symm(int ni, int nj,
   }
   #pragma endscop
 }
-
 
 int main(int argc, char** argv)
 {

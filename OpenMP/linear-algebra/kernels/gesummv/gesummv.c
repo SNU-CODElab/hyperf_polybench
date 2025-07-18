@@ -11,9 +11,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-
+#include <time.h>
 /* Include polybench common header. */
-#include <polybench.h>
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
@@ -93,6 +93,7 @@ void kernel_gesummv(int n,
 }
 
 
+
 int main(int argc, char** argv)
 {
   /* Retrieve problem size. */
@@ -119,12 +120,24 @@ int main(int argc, char** argv)
 
   /* Run kernel. */
   kernel_gesummv (n, alpha, beta,
+    POLYBENCH_ARRAY(A),
+    POLYBENCH_ARRAY(B),
+    POLYBENCH_ARRAY(tmp),
+    POLYBENCH_ARRAY(x),
+    POLYBENCH_ARRAY(y));
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  kernel_gesummv (n, alpha, beta,
 		  POLYBENCH_ARRAY(A),
 		  POLYBENCH_ARRAY(B),
 		  POLYBENCH_ARRAY(tmp),
 		  POLYBENCH_ARRAY(x),
 		  POLYBENCH_ARRAY(y));
+   }
+   polybench_timer_stop();
 
+  polybench_timer_print();
+  // print_array(10, POLYBENCH_ARRAY(y));
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

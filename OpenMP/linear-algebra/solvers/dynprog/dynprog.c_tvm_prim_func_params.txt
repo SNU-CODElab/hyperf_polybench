@@ -1,0 +1,4 @@
+Fuction Name: main0, Variable Name: W, Shape: {50, 50}, Data Type: kDLInt32, Buffer type: int (*)[50]
+Fuction Name: main0, Variable Name: c, Shape: {50, 50}, Data Type: kDLInt32, Buffer type: int (*)[50]
+Fuction Name: main0, Variable Name: out_l, Shape: {1}, Data Type: kDLInt32, Buffer type: int
+Fuction Name: main0, Variable Name: sum_c, Shape: {50, 50, 50}, Data Type: kDLInt32, Buffer type: int (*)[50][50]

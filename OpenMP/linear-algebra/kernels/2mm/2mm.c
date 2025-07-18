@@ -11,9 +11,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-
+#include <time.h>
+#include <omp.h>
 /* Include polybench common header. */
-#include <polybench.h>
+// #include <polybench.h>
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
@@ -57,8 +59,8 @@ void print_array(int ni, int nl,
 {
   int i, j;
 
-  for (i = 0; i < ni; i++)
-    for (j = 0; j < nl; j++) {
+  for (i = 0; i < 10; i++)
+    for (j = 0; j < 10; j++) {
 	fprintf (stderr, DATA_PRINTF_MODIFIER, D[i][j]);
 	if ((i * ni + j) % 20 == 0) fprintf (stderr, "\n");
     }
@@ -104,6 +106,8 @@ void kernel_2mm(int ni, int nj, int nk, int nl,
 }
 
 
+
+
 int main(int argc, char** argv)
 {
   /* Retrieve problem size. */
@@ -130,16 +134,29 @@ int main(int argc, char** argv)
 
   /* Start timer. */
   polybench_start_instruments;
-
+  kernel_2mm (ni, nj, nk, nl, alpha, beta,
+        POLYBENCH_ARRAY(tmp),
+        POLYBENCH_ARRAY(A),
+        POLYBENCH_ARRAY(B),
+        POLYBENCH_ARRAY(C),
+        POLYBENCH_ARRAY(D));
   /* Run kernel. */
-  kernel_2mm (ni, nj, nk, nl,
-	      alpha, beta,
-	      POLYBENCH_ARRAY(tmp),
-	      POLYBENCH_ARRAY(A),
-	      POLYBENCH_ARRAY(B),
-	      POLYBENCH_ARRAY(C),
-	      POLYBENCH_ARRAY(D));
+    polybench_timer_start();
 
+  for (int i = 0; i < 15; i++){
+    kernel_2mm (ni, nj, nk, nl,
+          alpha, beta,
+          POLYBENCH_ARRAY(tmp),
+          POLYBENCH_ARRAY(A),
+          POLYBENCH_ARRAY(B),
+          POLYBENCH_ARRAY(C),
+          POLYBENCH_ARRAY(D));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+
+  // print_array(128,128, POLYBENCH_ARRAY(D));
+  // Print elapsed time in microseconds
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

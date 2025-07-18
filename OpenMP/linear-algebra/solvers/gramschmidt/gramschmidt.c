@@ -13,7 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 512. */
@@ -105,6 +105,38 @@ void kernel_gramschmidt(int ni, int nj,
 }
 
 
+// static
+// void kernel_gramschmidt(int ni, int nj,
+// 			DATA_TYPE POLYBENCH_2D(A,NI,NJ,ni,nj),
+// 			DATA_TYPE POLYBENCH_2D(R,NJ,NJ,nj,nj),
+// 			DATA_TYPE POLYBENCH_2D(Q,NI,NJ,ni,nj))
+// {
+//   int i, j, k;
+
+//   DATA_TYPE nrm;
+//   #pragma scop
+//   // #pragma omp parallel for private (i, j)
+//   #pragma omp tvm tvm_arr_size(A[0:512][0:512],R[0:512][0:512],Q[0:512][0:512]) reduction(-:A[0:512][0:512]) reduction(+:R[0:512][0:512],nrm)
+//   for (k = 0; k < _PB_NJ; k++)
+//   {
+//     nrm = 0;
+//     for (i = 0; i < _PB_NI; i++)
+//       nrm += A[i][k] * A[i][k];
+//     R[k][k] = sqrt(nrm);
+//     for (i = 0; i < _PB_NI; i++)
+//       Q[i][k] = A[i][k] / R[k][k];
+//     for (j = k + 1; j < _PB_NJ; j++)
+//     {
+//       R[k][j] = 0;
+//       for (i = 0; i < _PB_NI; i++)
+//         R[k][j] += Q[i][k] * A[i][j];
+//       for (i = 0; i < _PB_NI; i++)
+//         A[i][j] = A[i][j] - Q[i][k] * R[k][j];
+//     }
+//   }
+//   #pragma endscop
+// }
+
 int main(int argc, char** argv)
 {
   /* Retrieve problem size. */
@@ -126,10 +158,18 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+  polybench_timer_start();
+  for (int i = 0; i < 1; i++){
   kernel_gramschmidt (ni, nj,
 		      POLYBENCH_ARRAY(A),
 		      POLYBENCH_ARRAY(R),
 		      POLYBENCH_ARRAY(Q));
+  }
+  polybench_timer_stop();
+
+  polybench_timer_print();
+  print_array(10, 10, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(R), POLYBENCH_ARRAY(Q));
+  
 
   /* Stop and print timer. */
   polybench_stop_instruments;

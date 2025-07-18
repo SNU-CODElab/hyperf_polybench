@@ -11,9 +11,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-
+#include <time.h>
 /* Include polybench common header. */
-#include <polybench.h>
+// #include </root/test/gemm/polybench-c-3.2/utilities/polybench.h>
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
@@ -82,7 +83,6 @@ void kernel_atax(int nx, int ny,
   #pragma endscop
 }
 
-
 int main(int argc, char** argv)
 {
   /* Retrieve problem size. */
@@ -102,11 +102,28 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+  // clock_t start = clock();
+   kernel_atax (nx, ny,
+	       POLYBENCH_ARRAY(A),
+	       POLYBENCH_ARRAY(x),
+	       POLYBENCH_ARRAY(y),
+	       POLYBENCH_ARRAY(tmp));
+  
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
   kernel_atax (nx, ny,
 	       POLYBENCH_ARRAY(A),
 	       POLYBENCH_ARRAY(x),
 	       POLYBENCH_ARRAY(y),
 	       POLYBENCH_ARRAY(tmp));
+  }
+  // clock_t end = clock();
+  polybench_timer_stop();
+  // double elapsed_us = (double)(end - start) / CLOCKS_PER_SEC * 1000000;
+  polybench_timer_print();
+  // print_array(30, POLYBENCH_ARRAY(y));
+  // Print elapsed time in microseconds
+  // printf("time: %.2f µs\n", elapsed_us/1000);
 
   /* Stop and print timer. */
   polybench_stop_instruments;

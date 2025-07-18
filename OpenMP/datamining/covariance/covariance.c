@@ -16,7 +16,7 @@
 #include <polybench.h>
 
 /* Include benchmark-specific header. */
-/* Default data type is double, default size is 4000. */
+/* Default data type is double, default size is 1000. */
 #include "covariance.h"
 
 
@@ -65,11 +65,12 @@ void kernel_covariance(int m, int n,
 {
   int i, j, j1, j2;
   
-  #pragma scop
+  // #pragma scop
   /* Determine mean of column vectors of input data matrix */
-  #pragma omp parallel
-  {
-    #pragma omp for private (i)
+  // #pragma omp parallel
+  // {
+    // #pragma omp for private (i)
+    // #pragma omp tvm tvm_arr_size(data[0:1000][0:1000],symmat[0:1000][0:1000],mean[0:1000]) reduction(+:mean[0:1000])
     for (j = 0; j < _PB_M; j++)
       {
         mean[j] = 0.0;
@@ -79,13 +80,15 @@ void kernel_covariance(int m, int n,
       }
       
     /* Center the column vectors. */
-    #pragma omp for private (j)
+    // #pragma omp for private (j)
+    // #pragma omp tvm tvm_arr_size(data[0:1000][0:1000],mean[0:1000]) 
     for (i = 0; i < _PB_N; i++)
       for (j = 0; j < _PB_M; j++)
 	data[i][j] -= mean[j];
       
     /* Calculate the m * m covariance matrix. */
-    #pragma omp for private (j2, i)
+    // #pragma omp for private (j2, i)
+    #pragma omp tvm tvm_arr_size(data[0:1000][0:1000],symmat[0:1000][0:1000]) reduction(+:symmat[0:1000][0:1000])
     for (j1 = 0; j1 < _PB_M; j1++)
       for (j2 = j1; j2 < _PB_M; j2++)
 	{
@@ -94,8 +97,8 @@ void kernel_covariance(int m, int n,
 	    symmat[j1][j2] += data[i][j1] * data[i][j2];
 	  symmat[j2][j1] = symmat[j1][j2];
         }
-  }
-  #pragma endscop
+  // }
+  // #pragma endscop
 }
 
 int main(int argc, char** argv)

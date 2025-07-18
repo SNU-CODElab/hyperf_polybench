@@ -13,7 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4096x4096. */
@@ -63,7 +63,9 @@ void kernel_conv2d(int ni,
 {
   int i, j;
   #pragma scop
-  #pragma omp parallel for private(j) collapse(2) schedule(static)
+  // #pragma omp parallel for simd simdlen(16) collapse(2) private(j) schedule(static) 
+  // #pragma omp parallel for private(j)
+  #pragma omp parallel for private(j) schedule(static) num_threads(16)
   for (i = 1; i < _PB_NI - 1; ++i)
   {
     for (j = 1; j < _PB_NJ - 1; ++j)
@@ -95,8 +97,15 @@ int main(int argc, char** argv)
 
   /* Run kernel. */
   kernel_conv2d (ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));
-
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  kernel_conv2d (ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
   /* Stop and print timer. */
+
+  // print_array(10, 10, POLYBENCH_ARRAY(B));
   polybench_stop_instruments;
   polybench_print_instruments;
   

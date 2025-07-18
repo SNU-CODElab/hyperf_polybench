@@ -13,8 +13,9 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+// #include <polybench.h>
 
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 20x1000. */
 #include "jacobi-2d-imper.h"
@@ -31,8 +32,8 @@ void init_array (int n,
   for (i = 0; i < n; i++)
     for (j = 0; j < n; j++)
       {
-	A[i][j] = ((DATA_TYPE) i*(j+2) + 2) / n;
-	B[i][j] = ((DATA_TYPE) i*(j+3) + 3) / n;
+	A[i][j] = (DATA_TYPE) i*(j) / n;
+	B[i][j] = (DATA_TYPE) i*(j) / n;
       }
 }
 
@@ -46,8 +47,8 @@ void print_array(int n,
 {
   int i, j;
 
-  for (i = 0; i < n; i++)
-    for (j = 0; j < n; j++) {
+  for (i = 0; i < 10; i++)
+    for (j = 0; j < 10; j++) {
       fprintf(stderr, DATA_PRINTF_MODIFIER, A[i][j]);
       if ((i * n + j) % 20 == 0) fprintf(stderr, "\n");
     }
@@ -57,6 +58,38 @@ void print_array(int n,
 
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
+// static
+// void kernel_jacobi_2d_imper(int tsteps,
+// 			    int n,
+// 			    DATA_TYPE POLYBENCH_2D(A,N,N,n,n),
+// 			    DATA_TYPE POLYBENCH_2D(B,N,N,n,n))
+// {
+//   int t, i, j;
+
+//   // #pragma scop
+  
+//   // #pragma omp parallel private(i,j,t)
+//   // {
+//     // #pragma omp master
+//     // {
+//       #pragma omp tvm tvm_arr_size(A[0:1000][0:1000],B[0:1000][0:1000])
+//       for (t = 0; t < _PB_TSTEPS; t++)
+//       {
+//         // #pragma omp for schedule(static) 
+//         for (i = 1; i < _PB_N - 1; i++)
+//           for (j = 1; j < _PB_N - 1; j++)
+//             B[i][j] = 0.2 * (A[i][j] + A[i][j-1] + A[i][1+j] + A[1+i][j] + A[i-1][j]);
+// 	      // #pragma omp for schedule(static) 
+//         for (i = 1; i < _PB_N-1; i++)
+//           for (j = 1; j < _PB_N-1; j++)
+//             A[i][j] = B[i][j];
+//       }
+//     // }
+//   // }
+//   // #pragma endscop
+// }
+
+
 static
 void kernel_jacobi_2d_imper(int tsteps,
 			    int n,
@@ -69,23 +102,24 @@ void kernel_jacobi_2d_imper(int tsteps,
   
   #pragma omp parallel private(i,j,t)
   {
-    #pragma omp master
-    {
+    // #pragma omp master
+    // {
       for (t = 0; t < _PB_TSTEPS; t++)
       {
         #pragma omp for schedule(static) 
         for (i = 1; i < _PB_N - 1; i++)
           for (j = 1; j < _PB_N - 1; j++)
-            B[i][j] = 0.2 * (A[i][j] + A[i][j-1] + A[i][1+j] + A[1+i][j] + A[i-1][j]);
+            B[i][j] = 0.20000000001 * (A[i][j] + A[i][j-1] + A[i][1+j] + A[1+i][j] + A[i-1][j]);
 	      #pragma omp for schedule(static) 
         for (i = 1; i < _PB_N-1; i++)
           for (j = 1; j < _PB_N-1; j++)
             A[i][j] = B[i][j];
       }
-    }
+    // }
   }
   #pragma endscop
 }
+
 
 
 int main(int argc, char** argv)
@@ -106,12 +140,18 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+  polybench_timer_start();
+  for (int i = 0; i < 1; i++){
+  /* Run kernel. */
   kernel_jacobi_2d_imper (tsteps, n, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));
-
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;
 
+  print_array(10, POLYBENCH_ARRAY(A));
   /* Prevent dead-code elimination. All live-out data must be printed
      by the function call in argument. */
   polybench_prevent_dce(print_array(n, POLYBENCH_ARRAY(A)));

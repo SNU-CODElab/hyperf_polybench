@@ -48,6 +48,15 @@
 #   define NM 2000
 #  endif
 
+#  ifdef YTOPT_DATASET
+#   define NI 800
+#   define NJ 1000
+#   define NK 900
+#   define NL 1200
+#   define NM 1100
+#  endif
+
+
 #  ifdef EXTRALARGE_DATASET
 #   define NI 4000
 #   define NJ 4000

@@ -1,0 +1,4 @@
+Fuction Name: main0, Variable Name: A, Shape: {512, 512}, Data Type: kDLFloat64, Buffer type: NULL TYPE
+Fuction Name: main0, Variable Name: Q, Shape: {512, 512}, Data Type: kDLFloat64, Buffer type: double (*)[512]
+Fuction Name: main0, Variable Name: R, Shape: {512, 512}, Data Type: kDLFloat64, Buffer type: NULL TYPE
+Fuction Name: main0, Variable Name: nrm, Shape: {1}, Data Type: kDLFloat64, Buffer type: double

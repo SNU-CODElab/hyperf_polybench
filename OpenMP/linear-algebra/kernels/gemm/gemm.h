@@ -52,7 +52,7 @@
 # define _PB_NK POLYBENCH_LOOP_BOUND(NK,nk)
 
 # ifndef DATA_TYPE
-#  define DATA_TYPE double
+#  define DATA_TYPE float
 #  define DATA_PRINTF_MODIFIER "%0.2lf "
 # endif
 

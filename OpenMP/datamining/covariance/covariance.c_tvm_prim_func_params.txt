@@ -1,0 +1,2 @@
+Fuction Name: main0, Variable Name: data, Shape: {1000, 1000}, Data Type: kDLFloat64, Buffer type: double (*)[1000]
+Fuction Name: main0, Variable Name: symmat, Shape: {1000, 1000}, Data Type: kDLFloat64, Buffer type: NULL TYPE

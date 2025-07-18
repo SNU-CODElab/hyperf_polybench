@@ -13,8 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
-
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
 #include "durbin.h"
@@ -72,31 +71,32 @@ void kernel_durbin(int n,
 		   DATA_TYPE POLYBENCH_1D(out,N,n))
 {
   int i, k;
-  #pragma scop
   y[0][0] = r[0];
   beta[0] = 1;
   alpha[0] = r[0];
-  #pragma omp parallel
-  {
-    #pragma omp for private (i)
+
     for (k = 1; k < _PB_N; k++)
     {
       beta[k] = beta[k-1] - alpha[k-1] * alpha[k-1] * beta[k-1];
       sum[0][k] = r[k];
+      // #pragma omp parallel for private (i)
       for (i = 0; i <= k - 1; i++)
         sum[i+1][k] = sum[i][k] + r[k-i-1] * y[i][k-1];
+
       alpha[k] = -sum[k][k] * beta[k];
+      // #pragma omp parallel for private (i)
       for (i = 0; i <= k-1; i++)
         y[i][k] = y[i][k-1] + alpha[k] * y[k-i-1][k-1];
+        
       y[k][k] = alpha[k];
     }
-    #pragma omp for
+
+    
+    #pragma omp parallel for private (i)
     for (i = 0; i < _PB_N; i++)
       out[i] = y[i][_PB_N-1];
-  }
-  #pragma endscop
-}
 
+}
 
 int main(int argc, char** argv)
 {
@@ -124,6 +124,16 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+    kernel_durbin (n,
+		 POLYBENCH_ARRAY(y),
+		 POLYBENCH_ARRAY(sum),
+		 POLYBENCH_ARRAY(alpha),
+		 POLYBENCH_ARRAY(beta),
+		 POLYBENCH_ARRAY(r),
+		 POLYBENCH_ARRAY(out));
+
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
   kernel_durbin (n,
 		 POLYBENCH_ARRAY(y),
 		 POLYBENCH_ARRAY(sum),
@@ -131,6 +141,11 @@ int main(int argc, char** argv)
 		 POLYBENCH_ARRAY(beta),
 		 POLYBENCH_ARRAY(r),
 		 POLYBENCH_ARRAY(out));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+  
+  // print_array(500, POLYBENCH_ARRAY(out));
 
   /* Stop and print timer. */
   polybench_stop_instruments;

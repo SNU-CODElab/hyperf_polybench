@@ -1,0 +1,627 @@
+2025-02-02 22:05:18 [INFO] [task_scheduler.cc:164] Initializing Task #0: "main0"
+2025-02-02 22:05:18 [INFO] [task_scheduler.cc:35] 
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((1000, 1000), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        # with T.block("root"):
+        for t, i, j in T.grid(20, 998, 998):
+            with T.block("block0"):
+                t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                T.writes(A[i_it + 1, j_it + 1])
+                with T.init():
+                    T.evaluate(1)
+                A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+2025-02-02 22:05:18 [INFO] [task_scheduler.cc:168] Total 1 design space(s) generated
+2025-02-02 22:05:18 [INFO] [task_scheduler.cc:174] Design space #0:
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((1000, 1000), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        with T.block("root"):
+            T.reads()
+            T.writes()
+            T.block_attr({"meta_schedule.parallel": 1024, "meta_schedule.vectorize": 64})
+            for t, i, j in T.grid(20, 998, 998):
+                with T.block("block0"):
+                    t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                    T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                    T.writes(A[i_it + 1, j_it + 1])
+                    with T.init():
+                        T.evaluate(1)
+                    A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+b0 = sch.get_block(name="root", func_name="main")
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.parallel", ann_val=1024)
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.vectorize", ann_val=64)
+2025-02-02 22:05:18 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:05:18 [INFO] [evolutionary_search.cc:715] Picked top 0 candidate(s) from database
+2025-02-02 22:05:18 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:18 [INFO] [evolutionary_search.cc:723] Sampled 512 candidate(s)
+2025-02-02 22:05:18 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:19 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:19 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:19 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:19 [INFO] [evolutionary_search.cc:649] Scores of the best 1 candidates:
+[1 : 1]:	0.8555
+2025-02-02 22:05:19 [INFO] [evolutionary_search.cc:727] Got 1 candidate(s) with evolutionary search
+2025-02-02 22:05:19 [INFO] [evolutionary_search.cc:730] Sending 1 candidates(s) for measurement
+2025-02-02 22:05:20 [INFO] [task_scheduler.cc:135] [Task #0: main0] Trial #1: GFLOPs: 8.1479. Time: 12273.0666 us. Best GFLOPs: 8.1479
+2025-02-02 22:05:20 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:05:20 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:05:20 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:20 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:21 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:05:22 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:05:23 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:05:24 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:25 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:25 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:25 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x31990a8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x318a7a8)]: 0 failure(s)
+2025-02-02 22:05:25 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:05:25 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:05:25 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:12:19 [INFO] [task_scheduler.cc:164] Initializing Task #0: "main0"
+2025-02-02 22:12:19 [INFO] [task_scheduler.cc:35] 
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((500, 500), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        # with T.block("root"):
+        for t, i, j in T.grid(10, 498, 498):
+            with T.block("block0"):
+                t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                T.writes(A[i_it + 1, j_it + 1])
+                with T.init():
+                    T.evaluate(1)
+                A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+2025-02-02 22:12:19 [INFO] [task_scheduler.cc:168] Total 1 design space(s) generated
+2025-02-02 22:12:19 [INFO] [task_scheduler.cc:174] Design space #0:
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((500, 500), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        with T.block("root"):
+            T.reads()
+            T.writes()
+            T.block_attr({"meta_schedule.parallel": 1024, "meta_schedule.vectorize": 64})
+            for t, i, j in T.grid(10, 498, 498):
+                with T.block("block0"):
+                    t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                    T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                    T.writes(A[i_it + 1, j_it + 1])
+                    with T.init():
+                        T.evaluate(1)
+                    A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+b0 = sch.get_block(name="root", func_name="main")
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.parallel", ann_val=1024)
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.vectorize", ann_val=64)
+2025-02-02 22:12:19 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:12:19 [INFO] [evolutionary_search.cc:715] Picked top 0 candidate(s) from database
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:723] Sampled 512 candidate(s)
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:649] Scores of the best 1 candidates:
+[1 : 1]:	0.7728
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:727] Got 1 candidate(s) with evolutionary search
+2025-02-02 22:12:20 [INFO] [evolutionary_search.cc:730] Sending 1 candidates(s) for measurement
+2025-02-02 22:12:22 [INFO] [task_scheduler.cc:135] [Task #0: main0] Trial #1: GFLOPs: 285.0958. Time: 350.7593 us. Best GFLOPs: 285.0958
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:22 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:23 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:24 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:25 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:26 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:27 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x33e52c8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x390fcc8)]: 0 failure(s)
+2025-02-02 22:12:27 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:12:27 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:12:27 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:13:58 [INFO] [task_scheduler.cc:164] Initializing Task #0: "main0"
+2025-02-02 22:13:58 [INFO] [task_scheduler.cc:35] 
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((500, 500), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        # with T.block("root"):
+        for t, i, j in T.grid(10, 498, 498):
+            with T.block("block0"):
+                t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                T.writes(A[i_it + 1, j_it + 1])
+                with T.init():
+                    T.evaluate(1)
+                A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+2025-02-02 22:13:58 [INFO] [task_scheduler.cc:168] Total 1 design space(s) generated
+2025-02-02 22:13:58 [INFO] [task_scheduler.cc:174] Design space #0:
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((500, 500), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        with T.block("root"):
+            T.reads()
+            T.writes()
+            T.block_attr({"meta_schedule.parallel": 1024, "meta_schedule.vectorize": 64})
+            for t, i, j in T.grid(10, 498, 498):
+                with T.block("block0"):
+                    t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                    T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                    T.writes(A[i_it + 1, j_it + 1])
+                    with T.init():
+                        T.evaluate(1)
+                    A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+b0 = sch.get_block(name="root", func_name="main")
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.parallel", ann_val=1024)
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.vectorize", ann_val=64)
+2025-02-02 22:13:58 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:13:58 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:13:58 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:13:58 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:13:58 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:13:58 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:13:59 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:13:59 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:13:59 [INFO] [evolutionary_search.cc:649] Scores of the best 1 candidates:
+[1 : 1]:	0.0360
+2025-02-02 22:13:59 [INFO] [evolutionary_search.cc:727] Got 1 candidate(s) with evolutionary search
+2025-02-02 22:13:59 [INFO] [evolutionary_search.cc:730] Sending 1 candidates(s) for measurement
+2025-02-02 22:14:00 [INFO] [task_scheduler.cc:135] [Task #0: main0] Trial #1: GFLOPs: 165.7740. Time: 603.2311 us. Best GFLOPs: 165.7740
+2025-02-02 22:14:00 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:00 [INFO] [evolutionary_search.cc:715] Picked top 2 candidate(s) from database
+2025-02-02 22:14:00 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:00 [INFO] [evolutionary_search.cc:723] Sampled 510 candidate(s)
+2025-02-02 22:14:00 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:00 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:715] Picked top 2 candidate(s) from database
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:723] Sampled 510 candidate(s)
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:01 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x43ff9f8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x4411498)]: 0 failure(s)
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:02 [INFO] [evolutionary_search.cc:715] Picked top 2 candidate(s) from database
+2025-02-02 22:14:16 [INFO] [task_scheduler.cc:164] Initializing Task #0: "main0"
+2025-02-02 22:14:16 [INFO] [task_scheduler.cc:35] 
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((2000, 2000), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        # with T.block("root"):
+        for t, i, j in T.grid(20, 1998, 1998):
+            with T.block("block0"):
+                t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                T.writes(A[i_it + 1, j_it + 1])
+                with T.init():
+                    T.evaluate(1)
+                A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+2025-02-02 22:14:16 [INFO] [task_scheduler.cc:168] Total 1 design space(s) generated
+2025-02-02 22:14:16 [INFO] [task_scheduler.cc:174] Design space #0:
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer((2000, 2000), "float64")):
+        T.func_attr({"global_symbol": "main0", "tir.noalias": T.bool(True)})
+        with T.block("root"):
+            T.reads()
+            T.writes()
+            T.block_attr({"meta_schedule.parallel": 1024, "meta_schedule.vectorize": 64})
+            for t, i, j in T.grid(20, 1998, 1998):
+                with T.block("block0"):
+                    t_it, i_it, j_it = T.axis.remap("SSS", [t, i, j])
+                    T.reads(A[i_it:i_it + 3, j_it:j_it + 3])
+                    T.writes(A[i_it + 1, j_it + 1])
+                    with T.init():
+                        T.evaluate(1)
+                    A[i_it + 1, j_it + 1] = (A[i_it, j_it] + A[i_it, j_it + 1] + A[i_it, j_it + 2] + A[i_it + 1, j_it] + A[i_it + 1, j_it + 1] + A[i_it + 1, j_it + 2] + A[i_it + 2, j_it] + A[i_it + 2, j_it + 1] + A[i_it + 2, j_it + 2]) * T.float64(0.1111111111111111)
+b0 = sch.get_block(name="root", func_name="main")
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.parallel", ann_val=1024)
+sch.annotate(block_or_loop=b0, ann_key="meta_schedule.vectorize", ann_val=64)
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:715] Picked top 0 candidate(s) from database
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:723] Sampled 512 candidate(s)
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:16 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:17 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:17 [INFO] [evolutionary_search.cc:649] Scores of the best 1 candidates:
+[1 : 1]:	0.8668
+2025-02-02 22:14:17 [INFO] [evolutionary_search.cc:727] Got 1 candidate(s) with evolutionary search
+2025-02-02 22:14:17 [INFO] [evolutionary_search.cc:730] Sending 1 candidates(s) for measurement
+2025-02-02 22:14:18 [INFO] [task_scheduler.cc:135] [Task #0: main0] Trial #1: GFLOPs: 2.5392. Time: 39381.9920 us. Best GFLOPs: 2.5392
+2025-02-02 22:14:18 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:18 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:14:18 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:18 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:14:18 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:14:19 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:20 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:21 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:715] Picked top 1 candidate(s) from database
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:723] Sampled 511 candidate(s)
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:22 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:23 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:23 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.RewriteParallelVectorizeUnroll(0x5258d68)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteLayout(0x539ed28)]: 0 failure(s)
+2025-02-02 22:14:23 [INFO] [evolutionary_search.cc:649] Scores of the best 0 candidates:
+2025-02-02 22:14:23 [INFO] [evolutionary_search.cc:727] Got 0 candidate(s) with evolutionary search
+2025-02-02 22:14:23 [INFO] [evolutionary_search.cc:730] Sending 0 candidates(s) for measurement

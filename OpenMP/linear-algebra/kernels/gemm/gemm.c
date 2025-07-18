@@ -11,10 +11,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
-
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
 #include "gemm.h"
@@ -112,14 +112,33 @@ int main(int argc, char** argv)
 
   /* Start timer. */
   polybench_start_instruments;
-
   /* Run kernel. */
+
   kernel_gemm (ni, nj, nk,
 	       alpha, beta,
 	       POLYBENCH_ARRAY(C),
 	       POLYBENCH_ARRAY(A),
 	       POLYBENCH_ARRAY(B));
+  
 
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  
+
+  kernel_gemm (ni, nj, nk,
+	       alpha, beta,
+	       POLYBENCH_ARRAY(C),
+	       POLYBENCH_ARRAY(A),
+	       POLYBENCH_ARRAY(B));
+  }
+  polybench_timer_stop();
+
+  polybench_timer_print();
+
+
+  // print_array(128,128, POLYBENCH_ARRAY(C));
+
+  
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

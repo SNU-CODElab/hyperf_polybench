@@ -16,7 +16,7 @@
 #include <polybench.h>
 
 /* Include benchmark-specific header. */
-/* Default data type is double, default size is 1024. */
+/* Default data type is double, default size is 1025. */
 #include "ludcmp.h"
 
 
@@ -60,6 +60,63 @@ void print_array(int n,
 
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
+// static
+// void kernel_ludcmp(int n,
+// 		   DATA_TYPE POLYBENCH_2D(A,N+1,N+1,n+1,n+1),
+// 		   DATA_TYPE POLYBENCH_1D(b,N+1,n+1),
+// 		   DATA_TYPE POLYBENCH_1D(x,N+1,n+1),
+// 		   DATA_TYPE POLYBENCH_1D(y,N+1,n+1))
+// {
+//   int i, j, k;
+
+//   DATA_TYPE w;
+  
+//   #pragma scop
+//   b[0] = 1.0;
+//   #pragma omp parallel
+//   {
+//     #pragma omp for private (j, k, w)
+//     for (i = 0; i < _PB_N; i++)
+//     {
+//       for (j = i+1; j <= _PB_N; j++)
+// 	    {
+//         w = A[j][i];
+//         for (k = 0; k < i; k++)
+//           w = w- A[j][k] * A[k][i];
+// 	      A[j][i] = w / A[i][i];
+//       }
+//       #pragma omp barrier
+//       for (j = i+1; j <= _PB_N; j++)
+// 	    {
+// 	      w = A[i+1][j];
+// 	      for (k = 0; k <= i; k++)
+// 	        w = w  - A[i+1][k] * A[k][j];
+// 	      A[i+1][j] = w;
+// 	    }
+//     }
+//     y[0] = b[0];
+//     #pragma omp for private (j, w)
+//     for (i = 1; i <= _PB_N; i++)
+//     {
+//       w = b[i];
+//       for (j = 0; j < i; j++)
+//         w = w - A[i][j] * y[j];
+//       y[i] = w;
+//     }
+//     x[_PB_N] = y[_PB_N] / A[_PB_N][_PB_N];
+//     #pragma omp for private (j, w)
+//     for (i = 0; i <= _PB_N - 1; i++)
+//     {
+//       w = y[_PB_N - 1 - (i)];
+//       for (j = _PB_N - i; j <= _PB_N; j++)
+//         w = w - A[_PB_N - 1 - i][j] * x[j];
+//       x[_PB_N - 1 - i] = w / A[_PB_N - 1 - (i)][_PB_N - 1-(i)];
+//     }
+//   }
+//   #pragma endscop
+// }
+
+
 static
 void kernel_ludcmp(int n,
 		   DATA_TYPE POLYBENCH_2D(A,N+1,N+1,n+1,n+1),
@@ -71,11 +128,11 @@ void kernel_ludcmp(int n,
 
   DATA_TYPE w;
   
-  #pragma scop
+  // #pragma scop
   b[0] = 1.0;
-  #pragma omp parallel
-  {
-    #pragma omp for private (j, k, w)
+  // #pragma omp parallel
+  // {
+    #pragma omp tvm tvm_arr_size(A[0:1025][0:1025],b[0:1025],x[0:1025],y[0:1025]) reduction(-:w)
     for (i = 0; i < _PB_N; i++)
     {
       for (j = i+1; j <= _PB_N; j++)
@@ -85,7 +142,7 @@ void kernel_ludcmp(int n,
           w = w- A[j][k] * A[k][i];
 	      A[j][i] = w / A[i][i];
       }
-      #pragma omp barrier
+      // #pragma omp barrier
       for (j = i+1; j <= _PB_N; j++)
 	    {
 	      w = A[i+1][j];
@@ -95,7 +152,8 @@ void kernel_ludcmp(int n,
 	    }
     }
     y[0] = b[0];
-    #pragma omp for private (j, w)
+    // #pragma omp for private (j, w)
+    // #pragma omp tvm tvm_arr_size(A[0:1025][0:1025],y[0:1025]) reduction(-:w)
     for (i = 1; i <= _PB_N; i++)
     {
       w = b[i];
@@ -104,7 +162,8 @@ void kernel_ludcmp(int n,
       y[i] = w;
     }
     x[_PB_N] = y[_PB_N] / A[_PB_N][_PB_N];
-    #pragma omp for private (j, w)
+    // #pragma omp for private (j, w)
+    // #pragma omp tvm tvm_arr_size(A[0:1025][0:1025],x[0:1025],y[0:1025]) reduction(-:w)
     for (i = 0; i <= _PB_N - 1; i++)
     {
       w = y[_PB_N - 1 - (i)];
@@ -112,10 +171,9 @@ void kernel_ludcmp(int n,
         w = w - A[_PB_N - 1 - i][j] * x[j];
       x[_PB_N - 1 - i] = w / A[_PB_N - 1 - (i)][_PB_N - 1-(i)];
     }
-  }
-  #pragma endscop
+  // }
+  // #pragma endscop
 }
-
 
 int main(int argc, char** argv)
 {

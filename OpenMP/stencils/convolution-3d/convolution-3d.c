@@ -13,10 +13,9 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
-
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 /* Include benchmark-specific header. */
-/* Default data type is double, default size is 4096x4096. */
+/* Default data type is double, default size is 128x128. */
 #include "convolution-3d.h"
 
 
@@ -29,10 +28,12 @@ void init_array (int ni, int nj, int nk,
 
   for (i = 0; i < ni; i++)
     for (j = 0; j < nj; j++)
-      for (k = 0; j < nk; k++)
+      for (k = 0; k < nk; k++)
 	{
 	  A[i][j][k] = i % 12 + 2 * (j % 7) + 3 * (k % 13);
 	}
+
+
 }
 
 
@@ -47,7 +48,7 @@ void print_array(int ni, int nj, int nk,
 
   for (i = 0; i < ni; i++)
     for (j = 0; j < nj; j++)
-      for (k = 0; j < nk; k++) {
+      for (k = 0; k < nk; k++) {
 	fprintf(stderr, DATA_PRINTF_MODIFIER, B[i][j][k]);
 	if (((i * NJ + j) * NK + k) % 20 == 0) fprintf(stderr, "\n");
       }
@@ -83,7 +84,7 @@ void kernel_conv2d(int ni,
 	       +  2 * A[i-1][j-1][k+1]  +  4 * A[i+1][j-1][k+1]
 	       +  5 * A[i-1][ j ][k+1]  +  7 * A[i+1][ j ][k+1]
 	       + -8 * A[i-1][j+1][k+1]  + 10 * A[i+1][j+1][k+1];
-           }
+    }
   }
   #pragma endscop
 }
@@ -108,8 +109,17 @@ int main(int argc, char** argv)
 
   /* Run kernel. */
   kernel_conv2d (ni, nj, nk, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));
+  
+
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+    kernel_conv2d (ni, nj, nk, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
 
   /* Stop and print timer. */
+  // print_array(ni, nj, nk, POLYBENCH_ARRAY(B))
   polybench_stop_instruments;
   polybench_print_instruments;
   

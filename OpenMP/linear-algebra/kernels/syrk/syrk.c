@@ -13,8 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
-
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
 #include "syrk.h"
@@ -86,6 +85,8 @@ void kernel_syrk(int ni, int nj,
 }
 
 
+
+
 int main(int argc, char** argv)
 {
   /* Retrieve problem size. */
@@ -107,6 +108,13 @@ int main(int argc, char** argv)
   /* Run kernel. */
   kernel_syrk (ni, nj, alpha, beta, POLYBENCH_ARRAY(C), POLYBENCH_ARRAY(A));
 
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  kernel_syrk (ni, nj, alpha, beta, POLYBENCH_ARRAY(C), POLYBENCH_ARRAY(A));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+  // print_array(10, POLYBENCH_ARRAY(C));
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

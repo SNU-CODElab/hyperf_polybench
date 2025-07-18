@@ -1,0 +1,5 @@
+Fuction Name: main0, Variable Name: data, Shape: {4000, 4000}, Data Type: kDLFloat32, Buffer type: float (*)[4000]
+Fuction Name: main0, Variable Name: eps, Shape: {1}, Data Type: kDLFloat32, Buffer type: float
+Fuction Name: main0, Variable Name: float_n, Shape: {1}, Data Type: kDLFloat32, Buffer type: float
+Fuction Name: main0, Variable Name: mean, Shape: {4000}, Data Type: kDLFloat32, Buffer type: float *
+Fuction Name: main0, Variable Name: stddev, Shape: {4000}, Data Type: kDLFloat32, Buffer type: NULL TYPE

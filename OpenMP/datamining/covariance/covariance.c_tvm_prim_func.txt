@@ -1,0 +1,16 @@
+# from tvm.script import tir as T
+
+@T.prim_func
+def main0(data: T.Buffer((1000, 1000), "float64"), symmat: T.Buffer((1000, 1000), "float64")):
+    T.func_attr({"tir.noalias": T.bool(True)})
+    # with T.block("root"):
+    for j1 in range(1000):
+        for j2 in range(1000 - j1):
+            for i in range(1000):
+                with T.block("reduction_block: symmat"):
+                    j1, j2, i = T.axis.remap("SSR", [j1, j2, i])
+                    with T.init():
+                        symmat[j1, j2 + j1] = T.float64(0)
+                    symmat[j1, j2 + j1] = symmat[j1, j2 + j1] + data[i, j1] * data[i, j2 + j1]
+            with T.block("block0"):
+                symmat[j2 + j1, j1] = symmat[j1, j2 + j1]

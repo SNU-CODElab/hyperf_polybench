@@ -1,0 +1,2 @@
+Fuction Name: main0, Variable Name: A, Shape: {1025, 1025}, Data Type: kDLFloat64, Buffer type: double (*)[1025]
+Fuction Name: main0, Variable Name: w, Shape: {1}, Data Type: kDLFloat64, Buffer type: double

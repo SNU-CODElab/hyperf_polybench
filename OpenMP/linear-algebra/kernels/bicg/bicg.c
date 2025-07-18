@@ -11,9 +11,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-
+#include <time.h>
 /* Include polybench common header. */
-#include <polybench.h>
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
+
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
@@ -85,12 +86,13 @@ void kernel_bicg(int nx, int ny,
 	for (j = 0; j < _PB_NY; j++)
 	  {
             s[j] = s[j] + r[i] * A[i][j];
-	    q[i] = q[i] + A[i][j] * p[j];
+	          q[i] = q[i] + A[i][j] * p[j];
 	  }
       }
   }
   #pragma endscop
 }
+
 
 
 int main(int argc, char** argv)
@@ -123,6 +125,19 @@ int main(int argc, char** argv)
 	       POLYBENCH_ARRAY(p),
 	       POLYBENCH_ARRAY(r));
 
+
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  kernel_bicg (nx, ny,
+	       POLYBENCH_ARRAY(A),
+	       POLYBENCH_ARRAY(s),
+	       POLYBENCH_ARRAY(q),
+	       POLYBENCH_ARRAY(p),
+	       POLYBENCH_ARRAY(r));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+  // print_array(500,500, POLYBENCH_ARRAY(s), POLYBENCH_ARRAY(q));
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

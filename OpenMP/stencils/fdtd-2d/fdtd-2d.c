@@ -13,7 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 50x1000x1000. */
@@ -68,6 +68,49 @@ void print_array(int nx,
 
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
+// static
+// void kernel_fdtd_2d(int tmax,
+// 		    int nx,
+// 		    int ny,
+// 		    DATA_TYPE POLYBENCH_2D(ex,NX,NY,nx,ny),
+// 		    DATA_TYPE POLYBENCH_2D(ey,NX,NY,nx,ny),
+// 		    DATA_TYPE POLYBENCH_2D(hz,NX,NY,nx,ny),
+// 		    DATA_TYPE POLYBENCH_1D(_fict_,TMAX,tmax))
+// {
+//   int t, i, j;
+//   #pragma scop
+//   #pragma omp parallel private (t,i,j)
+//   {
+//     // #pragma omp master
+//     // {
+//       for (t = 0; t < _PB_TMAX; t++)
+//       {
+//         #pragma omp for
+//         for (j = 0; j < _PB_NY; j++)
+//           ey[0][j] = _fict_[t];
+//         #pragma omp barrier
+//         #pragma omp for collapse(2) schedule(static)
+//         for (i = 1; i < _PB_NX; i++)
+//           for (j = 0; j < _PB_NY; j++)
+//             ey[i][j] = ey[i][j] - 0.5*(hz[i][j]-hz[i-1][j]);
+//         #pragma omp barrier
+//         #pragma omp for collapse(2) schedule(static)
+//         for (i = 0; i < _PB_NX; i++)
+//           for (j = 1; j < _PB_NY; j++)
+//             ex[i][j] = ex[i][j] - 0.5*(hz[i][j]-hz[i][j-1]);
+//         #pragma omp barrier
+//         #pragma omp for collapse(2) schedule(static)
+//         for (i = 0; i < _PB_NX - 1; i++)
+//           for (j = 0; j < _PB_NY - 1; j++)
+//             hz[i][j] = hz[i][j] - 0.7*  (ex[i][j+1] - ex[i][j] + ey[i+1][j] - ey[i][j]);
+//         #pragma omp barrier
+//       }
+//     // }
+//   }
+//   #pragma endscop
+// }
+
+
 static
 void kernel_fdtd_2d(int tmax,
 		    int nx,
@@ -78,37 +121,42 @@ void kernel_fdtd_2d(int tmax,
 		    DATA_TYPE POLYBENCH_1D(_fict_,TMAX,tmax))
 {
   int t, i, j;
-  #pragma scop
-  #pragma omp parallel private (t,i,j)
-  {
-    #pragma omp master
-    {
+  // #pragma scop
+  // #pragma omp parallel private (t,i,j)
+  // {
+    // #pragma omp master
+    // {
+      #pragma omp tvm tvm_arr_size(ex[0:1000][0:1000],ey[0:1000][0:1000],hz[0:1000][0:1000],_fict_[0:50])
       for (t = 0; t < _PB_TMAX; t++)
       {
-        #pragma omp for
+        // #pragma omp for
         for (j = 0; j < _PB_NY; j++)
           ey[0][j] = _fict_[t];
-        #pragma omp barrier
-        #pragma omp for collapse(2) schedule(static)
+        // #pragma omp barrier
+        // #pragma omp for collapse(2) schedule(static)
+
         for (i = 1; i < _PB_NX; i++)
           for (j = 0; j < _PB_NY; j++)
             ey[i][j] = ey[i][j] - 0.5*(hz[i][j]-hz[i-1][j]);
-        #pragma omp barrier
-        #pragma omp for collapse(2) schedule(static)
+        // #pragma omp barrier
+        // #pragma omp for collapse(2) schedule(static)
+
         for (i = 0; i < _PB_NX; i++)
           for (j = 1; j < _PB_NY; j++)
             ex[i][j] = ex[i][j] - 0.5*(hz[i][j]-hz[i][j-1]);
-        #pragma omp barrier
-        #pragma omp for collapse(2) schedule(static)
+        // #pragma omp barrier
+        // #pragma omp for collapse(2) schedule(static)
+        // #pragma omp tvm for
         for (i = 0; i < _PB_NX - 1; i++)
           for (j = 0; j < _PB_NY - 1; j++)
             hz[i][j] = hz[i][j] - 0.7*  (ex[i][j+1] - ex[i][j] + ey[i+1][j] - ey[i][j]);
-        #pragma omp barrier
+        // #pragma omp barrier
       }
-    }
-  }
-  #pragma endscop
+    // }
+  // }
+  // #pragma endscop
 }
+
 
 
 int main(int argc, char** argv)
@@ -135,13 +183,19 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+  polybench_timer_start();
+  for (int i = 0; i < 1000; i++){
   kernel_fdtd_2d (tmax, nx, ny,
 		  POLYBENCH_ARRAY(ex),
 		  POLYBENCH_ARRAY(ey),
 		  POLYBENCH_ARRAY(hz),
 		  POLYBENCH_ARRAY(_fict_));
-
-
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+  
+  //print hz [0:10][0:10]
+  print_array(10, 10, POLYBENCH_ARRAY(ex), POLYBENCH_ARRAY(ey), POLYBENCH_ARRAY(hz));
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

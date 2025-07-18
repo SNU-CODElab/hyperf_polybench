@@ -11,9 +11,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
+
 
 /* Include polybench common header. */
-#include <polybench.h>
+#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
@@ -82,7 +84,7 @@ void kernel_syr2k(int ni, int nj,
         C[i][j] *= beta;
     #pragma omp for private (j, k)  schedule(static)
     for (i = 0; i < _PB_NI; i++)
-      for (j = 0; j < _PB_NI; j++)
+      for (j = 0; j < _PB_NI; j++){
         for (k = 0; k < _PB_NJ; k++)
         {
           C[i][j] += alpha * A[i][k] * B[j][k];
@@ -116,11 +118,25 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+  //start timer
   kernel_syr2k (ni, nj,
 		alpha, beta,
 		POLYBENCH_ARRAY(C),
 		POLYBENCH_ARRAY(A),
 		POLYBENCH_ARRAY(B));
+
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  kernel_syr2k (ni, nj,
+		alpha, beta,
+		POLYBENCH_ARRAY(C),
+		POLYBENCH_ARRAY(A),
+		POLYBENCH_ARRAY(B));
+   }
+  polybench_timer_stop();
+
+  polybench_timer_print();
+  // print_array(10, POLYBENCH_ARRAY(C));
 
   /* Stop and print timer. */
   polybench_stop_instruments;

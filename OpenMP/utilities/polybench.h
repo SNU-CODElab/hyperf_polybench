@@ -20,9 +20,10 @@
  * See README or utilities/polybench.c for additional options.
  *
  */
+
+#define POLYBENCH_TIME 1
 #ifndef POLYBENCH_H
 # define POLYBENCH_H
-
 # include <stdlib.h>
 
 /* Array padding. By default, none is used. */
@@ -46,7 +47,7 @@
 #  define POLYBENCH_LOOP_BOUND(x,y) x
 # else
 /* default: */
-#  define POLYBENCH_LOOP_BOUND(x,y) y
+#  define POLYBENCH_LOOP_BOUND(x,y) x
 # endif
 
 
@@ -166,24 +167,30 @@ extern const unsigned int polybench_papi_eventlist[];
 
 
 /* Timing support. */
-# if defined(POLYBENCH_TIME) || defined(POLYBENCH_GFLOPS)
-#  undef polybench_start_instruments
-#  undef polybench_stop_instruments
-#  undef polybench_print_instruments
-#  define polybench_start_instruments polybench_timer_start();
-#  define polybench_stop_instruments polybench_timer_stop();
-#  define polybench_print_instruments polybench_timer_print();
-extern double polybench_program_total_flops;
-extern void polybench_timer_start();
-extern void polybench_timer_stop();
-extern void polybench_timer_print();
-# endif
+// # if defined(POLYBENCH_TIME) || defined(POLYBENCH_GFLOPS)
+// #  undef polybench_start_instruments
+// #  undef polybench_stop_instruments
+// #  undef polybench_print_instruments
+// #  define polybench_start_instruments polybench_timer_start();
+// #  define polybench_stop_instruments polybench_timer_stop();
+// #  define polybench_print_instruments polybench_timer_print();
+// extern double polybench_program_total_flops;
+// extern void polybench_timer_start();
+// extern void polybench_timer_stop();
+// extern void polybench_timer_print();
+// # endif
 
 /* Function declaration. */
 # ifdef POLYBENCH_TIME
-extern void polybench_timer_start();
-extern void polybench_timer_stop();
-extern void polybench_timer_print();
+#ifdef __cplusplus
+extern "C" {
+#endif
+void polybench_timer_start();
+void polybench_timer_stop();
+void polybench_timer_print();
+#ifdef __cplusplus
+}
+#endif
 # endif
 
 # ifdef POLYBENCH_PAPI
@@ -196,7 +203,15 @@ extern void polybench_papi_print();
 # endif
 
 /* Function prototypes. */
-extern void* polybench_alloc_data(unsigned long long int n, int elt_size);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void* polybench_alloc_data(unsigned long long int n, int elt_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* !POLYBENCH_H */

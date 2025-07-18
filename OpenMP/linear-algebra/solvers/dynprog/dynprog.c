@@ -13,7 +13,7 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is int, default size is 50. */
@@ -61,7 +61,7 @@ void kernel_dynprog(int tsteps, int length,
   #pragma scop
   #pragma omp parallel
   {
-    #pragma omp master
+    // #pragma omp master
     {
       for (iter = 0; iter < _PB_TSTEPS; iter++)
       {
@@ -89,6 +89,49 @@ void kernel_dynprog(int tsteps, int length,
 }
 
 
+// static
+// void kernel_dynprog(int tsteps, int length,
+// 		    DATA_TYPE POLYBENCH_2D(c,LENGTH,LENGTH,length,length),
+// 		    DATA_TYPE POLYBENCH_2D(W,LENGTH,LENGTH,length,length),
+// 		    DATA_TYPE POLYBENCH_3D(sum_c,LENGTH,LENGTH,LENGTH,length,length,length),
+// 		    DATA_TYPE *out)
+// {
+//   int iter, i, j, k;
+
+//   DATA_TYPE out_l = 0;
+  
+//   // #pragma scop
+//   // #pragma omp parallel
+//   // {
+//   //   #pragma omp master
+//   //   {
+//       #pragma omp tvm tvm_arr_size(c[0:50][0:50],W[0:50][0:50],sum_c[0:50][0:50][0:50]) 
+//       for (iter = 0; iter < _PB_TSTEPS; iter++)
+//       {
+//         // #pragma omp for private (j)
+//         for (i = 0; i <= _PB_LENGTH - 1; i++)
+//           for (j = 0; j <= _PB_LENGTH - 1; j++)
+//             c[i][j] = 0;
+//         // #pragma omp for private (j, k)
+//         for (i = 0; i <= _PB_LENGTH - 2; i++)
+//         {
+//           for (j = i + 1; j <= _PB_LENGTH - 1; j++)
+//           {
+//             sum_c[i][j][i] = 0;
+//             for (k = i + 1; k <= j-1; k++)
+//               sum_c[i][j][k] = sum_c[i][j][k - 1] + c[i][k] + c[k][j];
+//             c[i][j] = sum_c[i][j][j-1] + W[i][j];
+//           }
+//         }
+//         out_l += c[0][_PB_LENGTH - 1];
+//       }
+//   //   }
+//   // }
+//   // #pragma endscop
+//   *out = out_l;
+// }
+
+
 int main(int argc, char** argv)
 {
   /* Retrieve problem size. */
@@ -108,12 +151,17 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+  polybench_timer_start();
+  for (int i = 0; i < 1000; i++){
   kernel_dynprog (tsteps, length,
 		  POLYBENCH_ARRAY(c),
 		  POLYBENCH_ARRAY(W),
 		  POLYBENCH_ARRAY(sum_c),
 		  &out);
-
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+  print_array(out);
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;

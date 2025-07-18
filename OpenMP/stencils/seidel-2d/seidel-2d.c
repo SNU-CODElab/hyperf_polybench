@@ -13,7 +13,8 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include <polybench.h>
+// #include <polybench.h>
+#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 20x1000. */
@@ -42,8 +43,8 @@ void print_array(int n,
 {
   int i, j;
 
-  for (i = 0; i < n; i++)
-    for (j = 0; j < n; j++) {
+  for (i = 0; i < 10; i++)
+    for (j = 0; j < 10; j++) {
       fprintf(stderr, DATA_PRINTF_MODIFIER, A[i][j]);
       if ((i * n + j) % 20 == 0) fprintf(stderr, "\n");
     }
@@ -53,6 +54,33 @@ void print_array(int n,
 
 /* Main computational kernel. The whole function will be timed,
    including the call and return. */
+// static
+// void kernel_seidel_2d(int tsteps,
+// 		      int n,
+// 		      DATA_TYPE POLYBENCH_2D(A,N,N,n,n))
+// {
+//   int t, i, j;
+
+//   #pragma scop
+//   #pragma omp parallel private (t,i,j)
+//   {
+//     // #pragma omp master
+//     // {
+//       for (t = 0; t <= _PB_TSTEPS - 1; t++) {
+//         #pragma omp for schedule(static) collapse (2)
+//         for (i = 1; i<= _PB_N - 2; i++) {
+//           for (j = 1; j <= _PB_N - 2; j++) {
+//             A[i][j] = (A[i-1][j-1] + A[i-1][j] + A[i-1][j+1]
+//                        + A[i][j-1] + A[i][j] + A[i][j+1]
+//                        + A[i+1][j-1] + A[i+1][j] + A[i+1][j+1])/9.0;
+//           }
+//         }
+//       // }
+//     }
+//   }
+//   #pragma endscop
+// }
+
 static
 void kernel_seidel_2d(int tsteps,
 		      int n,
@@ -60,13 +88,18 @@ void kernel_seidel_2d(int tsteps,
 {
   int t, i, j;
 
-  #pragma scop
-  #pragma omp parallel private (t,i,j)
-  {
-    #pragma omp master
-    {
+  // #pragma scop
+  // #pragma omp parallel private (t,i,j)
+  // {
+    // #pragma omp master
+    // {
+      // #pragma omp tvm tvm_arr_size(A[0:1000][0:1000])
+      //500
+      // #pragma omp tvm tvm_arr_size(A[0:500][0:500])
+      //2000
+      #pragma omp tvm tvm_arr_size(A[0:2000][0:2000])
       for (t = 0; t <= _PB_TSTEPS - 1; t++) {
-        #pragma omp for schedule(static) collapse (2)
+        // #pragma omp for schedule(static) collapse (2)
         for (i = 1; i<= _PB_N - 2; i++) {
           for (j = 1; j <= _PB_N - 2; j++) {
             A[i][j] = (A[i-1][j-1] + A[i-1][j] + A[i-1][j+1]
@@ -75,10 +108,12 @@ void kernel_seidel_2d(int tsteps,
           }
         }
       }
-    }
-  }
-  #pragma endscop
+    // }
+  // }
+  // #pragma endscop
 }
+
+
 
 
 int main(int argc, char** argv)
@@ -98,8 +133,17 @@ int main(int argc, char** argv)
   polybench_start_instruments;
 
   /* Run kernel. */
+
   kernel_seidel_2d (tsteps, n, POLYBENCH_ARRAY(A));
 
+  polybench_timer_start();
+  for (int i = 0; i < 15; i++){
+  kernel_seidel_2d (tsteps, n, POLYBENCH_ARRAY(A));
+  }
+  polybench_timer_stop();
+  polybench_timer_print();
+
+  print_array(n, POLYBENCH_ARRAY(A));
   /* Stop and print timer. */
   polybench_stop_instruments;
   polybench_print_instruments;
