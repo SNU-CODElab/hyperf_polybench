@@ -1,4 +1,0 @@
-Fuction Name: main0, Variable Name: _fict_, Shape: {50}, Data Type: kDLFloat64, Buffer type: double *
-Fuction Name: main0, Variable Name: ex, Shape: {1000, 1000}, Data Type: kDLFloat64, Buffer type: double (*)[1000]
-Fuction Name: main0, Variable Name: ey, Shape: {1000, 1000}, Data Type: kDLFloat64, Buffer type: double (*)[1000]
-Fuction Name: main0, Variable Name: hz, Shape: {1000, 1000}, Data Type: kDLFloat64, Buffer type: double (*)[1000]

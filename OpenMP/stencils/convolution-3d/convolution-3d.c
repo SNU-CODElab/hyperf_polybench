@@ -13,7 +13,8 @@
 #include <math.h>
 
 /* Include polybench common header. */
-#include "/root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h"
+#include "../../utilities/polybench.h"
+
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 128x128. */
 #include "convolution-3d.h"

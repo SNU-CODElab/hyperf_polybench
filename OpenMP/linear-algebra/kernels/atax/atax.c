@@ -13,8 +13,7 @@
 #include <math.h>
 #include <time.h>
 /* Include polybench common header. */
-// #include </root/test/gemm/polybench-c-3.2/utilities/polybench.h>
-#include </root/test/gemm/PolyBench-ACC/OpenMP/utilities/polybench.h>
+#include "../../../utilities/polybench.h"
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
